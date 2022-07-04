@@ -1,5 +1,5 @@
 # Undoable
-Adds an undo and redo stack to state changes in a class via a decorator
+Adds an undo and redo stack to record changes in a method or class via a decorator
 
 The `Undoable` interface has two public functions:
 ```
@@ -12,7 +12,7 @@ class Undoable:
 ```
 
 The `@undoable(*member_names)` decorator defines the list of member variables to be recorded
-* as they are edited in a decorated method, or
+* as their values are changed in a decorated method, or
 * as their values are changed in a decorated class.
 
 This decorator takes as input the names of variables to record.
@@ -41,6 +41,15 @@ stateful.undo()
 # stateful.x == 1
 stateful.redo()
 # stateful.x == 2
+```
+
+```
+stateful = Stateful(1)
+stateful.set_value(2)
+stateful.undo()
+stateful.set_value(3) # Setting the value clears the redo stack
+stateful.redo()
+# An empty redo or undo stack raises an IndexError
 ```
 
 

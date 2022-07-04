@@ -12,15 +12,15 @@ class Undoable:
 ```
 
 The `@undoable(*member_names)` decorator defines the list of member variables to be recorded
-* as they are edited in a [decorated method](#decorated_method_eg), or
-* as their values are changed in a [decorated class](decorated_class_eg).
+* as they are edited in a decorated method, or
+* as their values are changed in a decorated class.
 
 This decorator takes as input the names of variables to record.
 Changes to variables not listed cannot be undone.
 
 ## Example usage 
 
-### via extension and decorated method {#decorated_method_eg}
+### via extension and decorated method
 
 ```
 class Stateful(Undoable):       # Extends Undoable
@@ -44,7 +44,7 @@ stateful.redo()
 ```
 
 
-### via class decorator {#decorated_class_eg}
+### via decorated class
 
 ```
 @undoable('x')                  # Record all changes to 'x' in this decorated class

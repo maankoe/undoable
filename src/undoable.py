@@ -32,8 +32,9 @@ def _init(original_init, *members):
         self._undo_stack = []
         self._redo_stack = []
         original_init(self, *args, **kwargs)
+        # We have to clear the undo/redo stack after init as this performs edits
+        self._redo_stack = []
         self._undo_stack = []
-
     return __init
 
 

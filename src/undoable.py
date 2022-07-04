@@ -1,38 +1,16 @@
+import types
+import inspect
 
-import copy
-
-_undo_stack = {}
-_redo_stack = {}
-
-def _getcopy(self, attr):
-    return copy.copy(getattr(self, attr))
+from undoable_utils import undo, redo, record_status
 
 
 def undoable(*attr_names):
-    def _undoable(f):
-        def __undoable(self, *args, **kwargs):
-            edit = {k: _getcopy(self, k) for k in attr_names}
-            self._undo_stack.append(edit)
-            return f(self, *args, **kwargs)
-        return __undoable
+    def _undoable(decorated):
+        if inspect.isclass(decorated):
+            return _undoable_class_decorator(decorated, *attr_names)
+        elif isinstance(decorated, types.FunctionType):
+            return _undoable_method_decorator(decorated, *attr_names)
     return _undoable
-
-
-def undo(self):
-    _do_edit(self, self._undo_stack, self._redo_stack)
-
-def redo(self):
-    _do_edit(self, self._redo_stack, self._undo_stack)
-
-def _do_edit(self, pop_stack, push_stack):
-        if len(pop_stack) == 0:
-            return
-        edit = pop_stack.pop()
-        redo_edit = {k: _getcopy(self, k) for k in edit.keys()}
-        push_stack.append(redo_edit)
-        for k in edit:
-            setattr(self, k, edit[k])
-
 
 
 class Undoable:
@@ -40,24 +18,51 @@ class Undoable:
         self._undo_stack = []
         self._redo_stack = []
 
-    def undo(self):
-        _do_edit(self, self._undo_stack, self._redo_stack)
+    undo = undo
+    redo = redo
 
-    def redo(self):
-        _do_edit(self, self._redo_stack, self._undo_stack)
-        
-class UndoableMeta(type):
-    def __new__(meta, name, bases, attrs):
-        obj = type.__new__(meta, name, bases + (Undoable,), attrs)
-        obj._undo_stack = []
-        obj._redo_stack = []
-        obj.undo = undo
-        obj.redo = redo
-        return obj
+    def __str__(self):
+        return f"{self._undo_stack}:{self._redo_stack}"
 
 
-    
+def _init(original_init, *members):
+    def __init(self, *args, **kwargs):
+        for member_name in members:
+            setattr(self, "_" + member_name, None)
+        self._undo_stack = []
+        self._redo_stack = []
+        original_init(self, *args, **kwargs)
+        self._undo_stack = []
 
-    
+    return __init
 
 
+def _create_property(member_name):
+    backing_member_name = "_" + member_name
+    @property
+    def member(self):
+        return getattr(self, backing_member_name)
+
+    @member.setter
+    @undoable(backing_member_name)
+    def member(self, value):
+        return setattr(self, backing_member_name, value)
+
+    return member
+
+
+def _undoable_method_decorator(f, *attr_names):
+    def __undoable(self, *args, **kwargs):
+        record_status(self, attr_names)
+        return f(self, *args, **kwargs)
+
+    return __undoable
+
+
+def _undoable_class_decorator(cls, members):
+    cls.__init__ = _init(cls.__init__, *members)
+    cls.undo = undo
+    cls.redo = redo
+    for member_name in members:
+        setattr(cls, member_name, _create_property(member_name))
+    return cls

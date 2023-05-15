@@ -1,28 +1,6 @@
 import unittest
 
 from test.test_utils import StatefulExtendsUndoable
-from undoable import *
-
-
-# class Stateful(Undoable):
-#     def __init__(self, x):
-#       super().__init__()
-#       self.x = x
-
-#     @undoable('x')
-#     def set_value(self, x):
-#         self.x = x
-
-# class StatefulMeta(metaclass=UndoableMeta):
-#     def __init__(self, x):
-#         self.x = x
-#
-#     @undoable('x')
-#     def set_value(self, x):
-#         self.x = x
-
-
-
 
 
 _empty_undo_error_regex = "[Ee]mpty.*[Uu]ndo"
@@ -30,6 +8,7 @@ _empty_redo_error_regex = "[Ee]mpty.*[Rr]edo"
 
 
 Stateful = StatefulExtendsUndoable
+
 
 class TestUndoable(unittest.TestCase):
     def test_mock(self):

@@ -6,12 +6,12 @@ class StatefulExtendsUndoable(Undoable):
         super().__init__()
         self.x = x
 
-    @undoable('x')
+    @undoable("x")
     def set_value(self, x):
         self.x = x
 
 
-@undoable('x')
+@undoable("x")
 class StatefulViaDecorator:
     def __init__(self, x):
         self.x = x

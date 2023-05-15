@@ -10,6 +10,7 @@ def undoable(*attr_names):
             return _undoable_class_decorator(decorated, *attr_names)
         elif isinstance(decorated, types.FunctionType):
             return _undoable_method_decorator(decorated, *attr_names)
+
     return _undoable
 
 
@@ -35,11 +36,13 @@ def _init(original_init, *members):
         # We have to clear the undo/redo stack after init as this performs edits
         self._redo_stack = []
         self._undo_stack = []
+
     return __init
 
 
 def _create_property(member_name):
     backing_member_name = "_" + member_name
+
     @property
     def member(self):
         return getattr(self, backing_member_name)

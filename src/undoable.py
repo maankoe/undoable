@@ -63,7 +63,7 @@ def _undoable_method_decorator(f, *attr_names):
     return __undoable
 
 
-def _undoable_class_decorator(cls, members):
+def _undoable_class_decorator(cls, *members):
     cls.__init__ = _init(cls.__init__, *members)
     cls.undo = undo
     cls.redo = redo

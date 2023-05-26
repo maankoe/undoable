@@ -1,13 +1,13 @@
 import unittest
 
-from test.test_utils import StatefulExtendsUndoable
+from test.test_utils import StatefulViaDecorator
 
 
 _empty_undo_error_regex = "[Ee]mpty.*[Uu]ndo"
 _empty_redo_error_regex = "[Ee]mpty.*[Rr]edo"
 
 
-Stateful = StatefulExtendsUndoable
+Stateful = StatefulViaDecorator
 
 
 class TestUndoable(unittest.TestCase):

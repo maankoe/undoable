@@ -18,3 +18,10 @@ class StatefulViaDecorator:
 
     def set_value(self, x):
         self.x = x
+
+
+@undoable("x", "y")
+class StatefulMulti:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y

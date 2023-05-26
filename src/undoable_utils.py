@@ -1,7 +1,7 @@
 import copy
 
 
-def _getcopy(self, attr):
+def _get_copy(self, attr):
     return copy.copy(getattr(self, attr))
 
 
@@ -14,7 +14,7 @@ def _do_edit(self, pop_stack, push_stack):
 
 
 def _current_values(self, attr_names):
-    return {k: _getcopy(self, k) for k in attr_names}
+    return {k: _get_copy(self, k) for k in attr_names}
 
 
 def record_status(self, attr_names):
